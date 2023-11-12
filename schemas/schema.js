@@ -9,7 +9,8 @@ const schema = Joi.object({
     )
     .messages({
       "any.required": "missing required {#label} field",
-      "string.pattern.base": "invalid name format",
+      "string.pattern.base":
+        "Invalid name format. Name may contain only letters, apostrophe, dash and spaces.",
     }),
   email: Joi.string().required().email().messages({
     "any.required": "missing required {#label} field",
@@ -22,7 +23,8 @@ const schema = Joi.object({
     )
     .messages({
       "any.required": "missing required {#label} field",
-      "string.pattern.base": "invalid phone format",
+      "string.pattern.base":
+        "Invalid format. Phone number must be digits and can contain spaces, dashes, parentheses and can start with +",
     }),
 });
 

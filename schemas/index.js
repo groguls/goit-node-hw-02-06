@@ -1,6 +1,3 @@
-const { schemaAddContact, schemaUpdateContact } = require("./schemas");
+const schema = require("./schema");
 
-module.exports = {
-  schemaAddContact,
-  schemaUpdateContact,
-};
+module.exports = schema;

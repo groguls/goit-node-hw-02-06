@@ -4,12 +4,13 @@ const {
   removeContact,
   addContact,
   updateContact,
+  Contact,
 } = require("../models");
 const HttpError = require("../helpers");
 const { decorateConrtoler } = require("../decorators");
 
 const getAll = async (req, res, next) => {
-  const result = await listContacts();
+  const result = await Contact.find();
   res.json(result);
 };
 

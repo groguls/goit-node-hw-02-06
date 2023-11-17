@@ -6,7 +6,7 @@ const {
   updateContact,
 } = require("./contacts");
 
-const Contact = require("./Contact");
+const { Contact, requestSchema } = require("./Contact");
 
 module.exports = {
   listContacts,
@@ -15,4 +15,5 @@ module.exports = {
   addContact,
   updateContact,
   Contact,
+  requestSchema,
 };

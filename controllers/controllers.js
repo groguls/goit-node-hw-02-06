@@ -1,11 +1,4 @@
-const {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-  updateContact,
-  Contact,
-} = require("../models");
+const { removeContact, updateContact, Contact } = require("../models");
 const HttpError = require("../helpers");
 const { decorateConrtoler } = require("../decorators");
 
@@ -16,7 +9,7 @@ const getAll = async (req, res, next) => {
 
 const getByID = async (req, res, next) => {
   const { contactId } = req.params;
-  const result = await getContactById(contactId);
+  const result = await Contact.findById(contactId);
   if (!result) {
     throw HttpError(404, `ID ${contactId} not found`);
   }
@@ -25,7 +18,7 @@ const getByID = async (req, res, next) => {
 
 const add = async (req, res, next) => {
   const newContact = req.body;
-  const result = await addContact(newContact);
+  const result = await Contact.create(newContact);
   res.status(201).json(result);
 };
 

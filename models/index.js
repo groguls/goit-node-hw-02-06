@@ -1,19 +1,13 @@
 const {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-  updateContact,
-} = require("./contacts");
-
-const { Contact, requestSchema } = require("./Contact");
+  Contact,
+  addRequestSchema,
+  updateRequestSchema,
+  updateStatusRequestSchema,
+} = require("./Contact");
 
 module.exports = {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-  updateContact,
   Contact,
-  requestSchema,
+  addRequestSchema,
+  updateRequestSchema,
+  updateStatusRequestSchema,
 };

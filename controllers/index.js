@@ -4,6 +4,7 @@ const {
   add,
   removeById,
   updateById,
+  updateStatusContact,
 } = require("./controllers");
 
 module.exports = {
@@ -12,4 +13,5 @@ module.exports = {
   add,
   removeById,
   updateById,
+  updateStatusContact,
 };

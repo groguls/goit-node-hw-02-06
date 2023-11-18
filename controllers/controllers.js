@@ -1,49 +1,45 @@
-const { removeContact, updateContact, Contact } = require("../models");
-const HttpError = require("../helpers");
-const { decorateConrtoler } = require("../decorators");
+const { Contact } = require("../models");
+const { decorateConrtoller, handleNotFoundId } = require("../utils");
 
-const getAll = async (req, res, next) => {
+const getAll = decorateConrtoller(async (req, res) => {
   const result = await Contact.find();
   res.json(result);
-};
+});
 
-const getByID = async (req, res, next) => {
+const getByID = decorateConrtoller(async (req, res) => {
   const { contactId } = req.params;
   const result = await Contact.findById(contactId);
-  if (!result) {
-    throw HttpError(404, `ID ${contactId} not found`);
-  }
+  handleNotFoundId(result, contactId);
   res.json(result);
-};
+});
 
-const add = async (req, res, next) => {
+const add = decorateConrtoller(async (req, res) => {
   const newContact = req.body;
   const result = await Contact.create(newContact);
   res.status(201).json(result);
-};
+});
 
-const removeById = async (req, res, next) => {
+const removeById = decorateConrtoller(async (req, res) => {
   const { contactId } = req.params;
-  const result = await removeContact(contactId);
-  if (!result) {
-    throw HttpError(404, `ID ${contactId} not found`);
-  }
+  const result = await Contact.findByIdAndDelete(contactId);
+  handleNotFoundId(result, contactId);
   res.json({ message: "Contact deleted" });
-};
+});
 
-const updateById = async (req, res, next) => {
+const updateById = decorateConrtoller(async (req, res) => {
   const { contactId } = req.params;
-  const result = await updateContact(contactId, req.body);
-  if (!result) {
-    throw HttpError(404, `ID ${contactId} not found`);
-  }
+  const result = await Contact.findByIdAndUpdate(contactId, req.body);
+  handleNotFoundId(result, contactId);
   res.json(result);
-};
+});
+
+const updateStatusContact = updateById;
 
 module.exports = {
-  getAll: decorateConrtoler(getAll),
-  getByID: decorateConrtoler(getByID),
-  add: decorateConrtoler(add),
-  removeById: decorateConrtoler(removeById),
-  updateById: decorateConrtoler(updateById),
+  getAll,
+  getByID,
+  add,
+  removeById,
+  updateById,
+  updateStatusContact,
 };

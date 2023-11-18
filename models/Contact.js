@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
 const Joi = require("joi");
+const { preUpdateHook, handleSaveError } = require("./hooks");
 
 const nameRegExp =
   /^[a-zA-Zа-яА-ЯіІєЄїЇю.]+(([' -][a-zA-Zа-яА-ЯіІєЄїЇ .])?[a-zA-Zа-яА-ЯіІєЄїЇ.]*)*$/;
@@ -36,9 +37,11 @@ const contactSchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 
-const Contact = model("contact", contactSchema);
+contactSchema.post("save", handleSaveError);
+contactSchema.pre("findOneAndUpdate", preUpdateHook);
+contactSchema.post("findOneAndUpdate", handleSaveError);
 
-const requestSchema = Joi.object({
+const addRequestSchema = Joi.object({
   name: Joi.string().min(3).required().pattern(nameRegExp).messages({
     "any.required": "missing required {#label} field",
     "string.pattern.base":
@@ -54,6 +57,26 @@ const requestSchema = Joi.object({
       "Invalid format. Phone number must be digits and can contain spaces, dashes, parentheses and can start with +",
   }),
   favorite: Joi.boolean(),
-});
+}).or("name", "email", "phone");
 
-module.exports = { Contact, requestSchema };
+const updateRequestSchema = Joi.object({
+  name: addRequestSchema.extract("name").optional(),
+  email: addRequestSchema.extract("email").optional(),
+  phone: addRequestSchema.extract("phone").optional(),
+  favorite: addRequestSchema.extract("favorite"),
+}).or("name", "email", "phone");
+
+const updateStatusRequestSchema = Joi.object({
+  favorite: Joi.boolean()
+    .required()
+    .messages({ "any.required": "missing field {#label}" }),
+}).or("favorite");
+
+const Contact = model("contact", contactSchema);
+
+module.exports = {
+  Contact,
+  addRequestSchema,
+  updateRequestSchema,
+  updateStatusRequestSchema,
+};

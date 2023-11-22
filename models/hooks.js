@@ -5,7 +5,8 @@ const preUpdateHook = function (next) {
 };
 
 const handleSaveError = function (error, doc, next) {
-  error.statusCode = 400;
+  error.statusCode =
+    error.code === 11000 && error.name === "MongoServerError" ? 409 : 400;
   next();
 };
 

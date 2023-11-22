@@ -16,22 +16,22 @@ const {
 } = require("../../models");
 const { isValidId } = require("../../middlewares");
 
-const router = express.Router();
+const contactsRouter = express.Router();
 
-router.route("/").get(getAll).post(validateData(addRequestSchema), add);
+contactsRouter.route("/").get(getAll).post(validateData(addRequestSchema), add);
 
-router
+contactsRouter
   .route("/:contactId")
   .all(isValidId)
   .get(getByID)
   .delete(removeById)
   .put(validateData(updateRequestSchema), updateById);
 
-router.patch(
+contactsRouter.patch(
   "/:contactId/favorite",
   isValidId,
   validateData(updateStatusRequestSchema),
   updateStatusContact
 );
 
-module.exports = router;
+module.exports = contactsRouter;

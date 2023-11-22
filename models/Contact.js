@@ -6,6 +6,7 @@ const nameRegExp =
   /^[a-zA-Zа-яА-ЯіІєЄїЇю.]+(([' -][a-zA-Zа-яА-ЯіІєЄїЇ .])?[a-zA-Zа-яА-ЯіІєЄїЇ.]*)*$/;
 const phoneRegExp =
   /\+?\d{1,4}?[ .\-\s]?\(?\d{1,3}?\)?[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,9}/;
+const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const contactSchema = new Schema(
   {
@@ -19,6 +20,7 @@ const contactSchema = new Schema(
     },
     email: {
       type: String,
+      match: [emailRegExp, "Invalid email format"],
       required: true,
     },
     phone: {
@@ -32,6 +34,10 @@ const contactSchema = new Schema(
     favorite: {
       type: Boolean,
       default: false,
+    },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
     },
   },
   { versionKey: false, timestamps: true }
@@ -47,7 +53,7 @@ const addRequestSchema = Joi.object({
     "string.pattern.base":
       "Invalid name format. Name may contain only letters, apostrophe, dash and spaces.",
   }),
-  email: Joi.string().required().email().messages({
+  email: Joi.string().required().pattern(emailRegExp).messages({
     "any.required": "missing required {#label} field",
     "string.email": "invalid email format",
   }),
@@ -57,7 +63,7 @@ const addRequestSchema = Joi.object({
       "Invalid format. Phone number must be digits and can contain spaces, dashes, parentheses and can start with +",
   }),
   favorite: Joi.boolean(),
-}).or("name", "email", "phone");
+}).and("name", "email", "phone");
 
 const updateRequestSchema = Joi.object({
   name: addRequestSchema.extract("name").optional(),
@@ -70,7 +76,7 @@ const updateStatusRequestSchema = Joi.object({
   favorite: Joi.boolean()
     .required()
     .messages({ "any.required": "missing field {#label}" }),
-}).or("favorite");
+}).and("favorite");
 
 const Contact = model("contact", contactSchema);
 

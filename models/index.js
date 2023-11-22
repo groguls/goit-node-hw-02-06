@@ -5,9 +5,14 @@ const {
   updateStatusRequestSchema,
 } = require("./Contact");
 
+const { User, registerUserSchema, loginUserSchema } = require("./User");
+
 module.exports = {
   Contact,
   addRequestSchema,
   updateRequestSchema,
   updateStatusRequestSchema,
+  User,
+  registerUserSchema,
+  loginUserSchema,
 };

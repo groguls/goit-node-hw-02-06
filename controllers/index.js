@@ -6,6 +6,7 @@ const {
   updateById,
   updateStatusContact,
 } = require("./controllers");
+const { register, login } = require("./users-controllers");
 
 module.exports = {
   getAll,
@@ -14,4 +15,6 @@ module.exports = {
   removeById,
   updateById,
   updateStatusContact,
+  register,
+  login,
 };

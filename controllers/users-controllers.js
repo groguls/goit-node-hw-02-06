@@ -1,50 +1,62 @@
-const { User } = require("../models");
-const { decorateConrtoller, handleNotFoundId, HttpError } = require("../utils");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const {
+  registerUserService,
+  loginUserService,
+  logoutUserService,
+  subscriptionUserService,
+} = require("../servises");
+const { decorateConrtoller } = require("../utils");
 
 const register = decorateConrtoller(async (req, res) => {
-  const { password, email } = req.body;
-
-  const candidate = await User.findOne({ email });
-  if (candidate) {
-    throw new HttpError(409, "Email in use");
-  }
-
-  const hashPassword = await bcrypt.hash(password, 10);
-
-  const newUser = await User.create({ ...req.body, password: hashPassword });
+  const { email, subscription } = await registerUserService(req.body);
 
   res.status(201).json({
-    email: newUser.email,
-    subscription: newUser.subscription,
+    user: {
+      email,
+      subscription,
+    },
   });
 });
 
 const login = decorateConrtoller(async (req, res) => {
-  const { password, email, _id } = req.body;
-
-  const user = await User.findOne({ email });
-
-  if (!user) {
-    throw new HttpError(401, "Email or password is wrong");
-  }
-
-  const passwordMatches = await bcrypt.compare(password, user.password);
-  if (!passwordMatches) {
-    throw new HttpError(401, "Email or password is wrong");
-  }
-
-  const privateKey = "02VxmwDdcF76qAOnGd3uwetY3Ap0RQqF";
-
-  const token = jwt.sign({ _id }, privateKey, { expiresIn: "1h" });
+  const { token, email, subscription } = await loginUserService(req.body);
 
   res.json({
     token,
+    user: { email, subscription },
+  });
+});
+
+const logout = decorateConrtoller(async (req, res) => {
+  await logoutUserService(req.user._id);
+
+  res.sendStatus(204);
+});
+
+const current = decorateConrtoller((req, res) => {
+  const { email, subscription } = req.user;
+
+  res.json({
+    email,
+    subscription,
+  });
+});
+
+const subscription = decorateConrtoller(async (req, res) => {
+  const { email, subscription } = await subscriptionUserService(
+    req.user._id,
+    req.body
+  );
+
+  res.json({
+    email,
+    subscription,
   });
 });
 
 module.exports = {
   register,
   login,
+  logout,
+  current,
+  subscription,
 };

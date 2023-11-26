@@ -1,11 +1,11 @@
 const express = require("express");
 
 const {
-  getAll,
-  getByID,
-  add,
-  removeById,
-  updateById,
+  getAllContacts,
+  getContactByID,
+  addContact,
+  removeContactById,
+  updateContactById,
   updateStatusContact,
 } = require("../../controllers");
 const { validateData } = require("../../utils");
@@ -14,21 +14,26 @@ const {
   updateRequestSchema,
   updateStatusRequestSchema,
 } = require("../../models");
-const { isValidId } = require("../../middlewares");
+const { isValidId, authVerification } = require("../../middlewares");
 
 const contactsRouter = express.Router();
 
-contactsRouter.route("/").get(getAll).post(validateData(addRequestSchema), add);
+contactsRouter
+  .route("/")
+  .all(authVerification)
+  .get(getAllContacts)
+  .post(validateData(addRequestSchema), addContact);
 
 contactsRouter
   .route("/:contactId")
-  .all(isValidId)
-  .get(getByID)
-  .delete(removeById)
-  .put(validateData(updateRequestSchema), updateById);
+  .all(authVerification, isValidId)
+  .get(getContactByID)
+  .delete(removeContactById)
+  .put(validateData(updateRequestSchema), updateContactById);
 
 contactsRouter.patch(
   "/:contactId/favorite",
+  authVerification,
   isValidId,
   validateData(updateStatusRequestSchema),
   updateStatusContact

@@ -23,9 +23,9 @@ const userSchema = new Schema(
       enum: subscriptionList,
       default: "starter",
     },
-    token: { type: String, default: "" },
+    token: { type: String, default: null },
   },
-  { versionKey: false, timestamps: true }
+  { versionKey: false }
 );
 
 userSchema.post("save", handleSaveError);
@@ -53,10 +53,15 @@ const loginUserSchema = Joi.object({
   password: registerUserSchema.extract("password"),
 }).and("email", "password");
 
+const subscriptionUserSchema = Joi.object({
+  subscription: registerUserSchema.extract("subscription"),
+}).and("subscription");
+
 const User = model("user", userSchema);
 
 module.exports = {
   User,
   registerUserSchema,
   loginUserSchema,
+  subscriptionUserSchema,
 };

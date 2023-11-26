@@ -5,7 +5,12 @@ const {
   updateStatusRequestSchema,
 } = require("./Contact");
 
-const { User, registerUserSchema, loginUserSchema } = require("./User");
+const {
+  User,
+  registerUserSchema,
+  loginUserSchema,
+  subscriptionUserSchema,
+} = require("./User");
 
 module.exports = {
   Contact,
@@ -15,4 +20,5 @@ module.exports = {
   User,
   registerUserSchema,
   loginUserSchema,
+  subscriptionUserSchema,
 };

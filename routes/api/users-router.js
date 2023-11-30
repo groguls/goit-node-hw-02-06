@@ -11,8 +11,12 @@ const {
   logout,
   current,
   subscription,
+  avatar,
 } = require("../../controllers");
-const { authVerification } = require("../../middlewares");
+const {
+  authVerification,
+  uploadAvatarMiddleware,
+} = require("../../middlewares");
 
 const usersRouter = express.Router();
 
@@ -26,5 +30,6 @@ usersRouter.patch(
   validateData(subscriptionUserSchema),
   subscription
 );
+usersRouter.patch("/avatars", authVerification, uploadAvatarMiddleware, avatar);
 
 module.exports = usersRouter;

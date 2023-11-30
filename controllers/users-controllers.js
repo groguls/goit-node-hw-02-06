@@ -3,6 +3,7 @@ const {
   loginUserService,
   logoutUserService,
   subscriptionUserService,
+  updateAvatarUserService,
 } = require("../servises");
 const { decorateConrtoller } = require("../utils");
 
@@ -53,10 +54,17 @@ const subscription = decorateConrtoller(async (req, res) => {
   });
 });
 
+const avatar = decorateConrtoller(async (req, res) => {
+  const { avatarURL } = await updateAvatarUserService(req.user._id, req.file);
+
+  res.json({ avatarURL });
+});
+
 module.exports = {
   register,
   login,
   logout,
   current,
   subscription,
+  avatar,
 };

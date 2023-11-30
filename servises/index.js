@@ -11,6 +11,7 @@ const {
   loginUserService,
   logoutUserService,
   subscriptionUserService,
+  updateAvatarUserService,
 } = require("./users-services");
 
 module.exports = {
@@ -23,4 +24,5 @@ module.exports = {
   loginUserService,
   logoutUserService,
   subscriptionUserService,
+  updateAvatarUserService,
 };

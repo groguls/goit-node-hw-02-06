@@ -12,6 +12,7 @@ const {
   logout,
   current,
   subscription,
+  avatar,
 } = require("./users-controllers");
 
 module.exports = {
@@ -26,4 +27,5 @@ module.exports = {
   logout,
   current,
   subscription,
+  avatar,
 };

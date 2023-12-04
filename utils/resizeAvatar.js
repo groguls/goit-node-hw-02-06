@@ -2,7 +2,7 @@ const Jimp = require("jimp");
 
 const resizeAvatar = async (pathToAvatar) => {
   const avatar = await Jimp.read(pathToAvatar);
-  await avatar.image.contain(
+  await avatar.contain(
     250,
     250,
     Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE

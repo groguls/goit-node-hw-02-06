@@ -8,7 +8,7 @@ let server = null;
 
 beforeAll(async () => {
   await mongoose.connect(process.env.URI);
-  server = app.listen(process.env.PORT);
+  server = app.listen(process.env.PORT + 1);
 });
 
 afterAll(async () => {

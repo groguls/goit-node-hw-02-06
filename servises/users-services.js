@@ -51,6 +51,10 @@ const subscriptionUserService = async (id, subscription) => {
 };
 
 const updateAvatarUserService = async (id, avatar) => {
+  if (!avatar) {
+    throw new HttpError(400, "No file to update");
+  }
+
   const { path: tempPath, filename } = avatar;
 
   await resizeAvatar(tempPath);

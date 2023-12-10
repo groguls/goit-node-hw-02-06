@@ -10,6 +10,7 @@ const {
   registerUserSchema,
   loginUserSchema,
   subscriptionUserSchema,
+  verificationUserSchema,
 } = require("./User");
 
 module.exports = {
@@ -21,4 +22,5 @@ module.exports = {
   registerUserSchema,
   loginUserSchema,
   subscriptionUserSchema,
+  verificationUserSchema,
 };

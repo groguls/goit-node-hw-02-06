@@ -4,6 +4,7 @@ const {
   registerUserSchema,
   loginUserSchema,
   subscriptionUserSchema,
+  verificationUserSchema,
 } = require("../../models");
 const {
   register,
@@ -12,6 +13,8 @@ const {
   current,
   subscription,
   avatar,
+  verifyMail,
+  reSendVerificationMail,
 } = require("../../controllers");
 const {
   authVerification,
@@ -22,8 +25,14 @@ const usersRouter = express.Router();
 
 usersRouter.post("/register", validateData(registerUserSchema), register);
 usersRouter.post("/login", validateData(loginUserSchema), login);
+usersRouter.post(
+  "/verify",
+  validateData(verificationUserSchema),
+  reSendVerificationMail
+);
 usersRouter.post("/logout", authVerification, logout);
 usersRouter.get("/current", authVerification, current);
+usersRouter.get("/verify/:verificationToken", verifyMail);
 usersRouter.patch(
   "/",
   authVerification,

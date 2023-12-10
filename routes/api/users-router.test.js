@@ -19,7 +19,7 @@ afterAll(async () => {
 describe("Test /users/login route", () => {
   test("should login with correct credentials and return a token and user info", async () => {
     const credentials = {
-      email: "test@user.com",
+      email: "d927d665763d03@crankymonkey.info",
       password: "123456",
     };
 

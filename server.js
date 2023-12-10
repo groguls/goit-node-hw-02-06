@@ -1,17 +1,21 @@
 const app = require("./app");
 
-const mongoose = require("mongoose");
+const { connect } = require("mongoose");
 require("dotenv").config();
 
-mongoose
-  .connect(process.env.URI)
-  .then(() => {
-    console.log("Database connection successful");
-    app.listen(process.env.PORT, () => {
-      console.log(`Server running. Use our API on port: ${process.env.PORT}`);
+const { URI, PORT } = process.env;
+
+const server = async () => {
+  try {
+    const db = await connect(URI);
+    console.log(`Database "${db.connection.name}" connection successful`);
+    app.listen(PORT, () => {
+      console.log(`Server running. Use our API on port: ${PORT}`);
     });
-  })
-  .catch((error) => {
+  } catch (error) {
     console.log(error.message);
     process.exit(1);
-  });
+  }
+};
+
+server();

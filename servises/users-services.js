@@ -1,10 +1,11 @@
 const { User } = require("../models");
-const { HttpError, resizeAvatar } = require("../utils");
+const { HttpError, resizeAvatar, sendVerifyEmail } = require("../utils");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const gravatar = require("gravatar");
 const path = require("path");
 const fs = require("fs/promises");
+const { nanoid } = require("nanoid");
 
 const registerUserService = async (userData) => {
   const { password, email } = userData;
@@ -16,11 +17,15 @@ const registerUserService = async (userData) => {
 
   const avatarURL = gravatar.url(email, { s: "250", d: "retro" }, true);
   const hashedPassword = await bcrypt.hash(password, 10);
+  const verificationToken = nanoid();
+
+  await sendVerifyEmail(email, verificationToken);
 
   return await User.create({
     ...userData,
     password: hashedPassword,
     avatarURL,
+    verificationToken,
   });
 };
 
@@ -33,13 +38,16 @@ const loginUserService = async (credentials) => {
     throw new HttpError(401, "Email or password is wrong");
   }
 
-  const { PRIVATE_KEY } = process.env;
+  if (!candidate.verify) {
+    throw new HttpError(400, "Email verification is required before log in");
+  }
 
-  const token = jwt.sign({ id: candidate._id }, PRIVATE_KEY, {
+  const token = jwt.sign({ id: candidate._id }, process.env.PRIVATE_KEY, {
     expiresIn: "1h",
   });
 
-  return await User.findByIdAndUpdate(candidate._id, { token });
+  candidate.token = token;
+  return await candidate.save({ validateBeforeSave: false });
 };
 
 const logoutUserService = async (id) => {
@@ -68,10 +76,38 @@ const updateAvatarUserService = async (id, avatar) => {
   return await User.findByIdAndUpdate(id, { avatarURL });
 };
 
+const verifyMailUserService = async (verificationToken) => {
+  const candidate = await User.findOne({ verificationToken });
+
+  if (!candidate) {
+    throw new HttpError(404, "User not found");
+  }
+
+  candidate.verificationToken = null;
+  candidate.verify = true;
+  return await candidate.save({ validateBeforeSave: false });
+};
+
+const reSendMailUserService = async (email) => {
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new HttpError(404, "Email not found");
+  }
+
+  if (user.verify) {
+    throw new HttpError(400, "Verification has already been passed");
+  }
+
+  return await sendVerifyEmail(user.email, user.verificationToken);
+};
+
 module.exports = {
   registerUserService,
   loginUserService,
   logoutUserService,
   subscriptionUserService,
   updateAvatarUserService,
+  verifyMailUserService,
+  reSendMailUserService,
 };

@@ -4,6 +4,8 @@ const {
   logoutUserService,
   subscriptionUserService,
   updateAvatarUserService,
+  verifyMailUserService,
+  reSendMailUserService,
 } = require("../servises");
 const { decorateConrtoller } = require("../utils");
 
@@ -60,6 +62,18 @@ const avatar = decorateConrtoller(async (req, res) => {
   res.json({ avatarURL });
 });
 
+const verifyMail = decorateConrtoller(async (req, res) => {
+  await verifyMailUserService(req.params.verificationToken);
+
+  res.json({ message: "Verification successful" });
+});
+
+const reSendVerificationMail = decorateConrtoller(async (req, res) => {
+  await reSendMailUserService(req.body.email);
+
+  res.json({ message: "Verification email sent" });
+});
+
 module.exports = {
   register,
   login,
@@ -67,4 +81,6 @@ module.exports = {
   current,
   subscription,
   avatar,
+  verifyMail,
+  reSendVerificationMail,
 };

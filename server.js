@@ -3,7 +3,7 @@ const app = require("./app");
 const { connect } = require("mongoose");
 require("dotenv").config();
 
-const { URI, PORT } = process.env;
+const { URI, PORT = 5000 } = process.env;
 
 const server = async () => {
   try {
